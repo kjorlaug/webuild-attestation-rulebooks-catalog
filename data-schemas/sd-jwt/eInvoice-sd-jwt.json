@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://webuild-consortium.example/schemas/eu.we-build.einvoice.1.schema.json",
+  "$id": "https://webuild-consortium.example/schemas/eu.we-build.einvoice.1.v0.71.schema.json",
   "title": "WE BUILD eInvoice Attestation",
-  "description": "Type Metadata / JSON Schema for the SD-JWT VC claims set of the eInvoice attestation (vct: eu.we-build:einvoice:1), as defined in the WE BUILD SC5 eInvoice Attestation Rulebook v0.7, Chapters 2-3.",
+  "description": "JSON Schema for the SD-JWT VC claims set of the eInvoice attestation (vct: eu.we-build:einvoice:1)",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -53,7 +53,10 @@
         "status_list": {
           "type": "object",
           "additionalProperties": true,
-          "required": ["idx", "uri"],
+          "required": [
+            "idx",
+            "uri"
+          ],
           "properties": {
             "idx": {
               "type": "integer",
@@ -68,7 +71,9 @@
           }
         }
       },
-      "required": ["status_list"]
+      "required": [
+        "status_list"
+      ]
     },
     "cnf": {
       "type": "object",
@@ -89,8 +94,8 @@
     },
     "attestation_legal_category": {
       "type": "string",
-      "const": "EAA",
-      "description": "Legal category of the attestation (ARB_12). Section 2.1."
+      "const": "non-qualified-EAA",
+      "description": "Legal category of the attestation. For this rulebook profile the exact value SHALL be `non-qualified-EAA`. Section 2.1."
     },
     "invoicePayloadHash": {
       "type": "string",
@@ -100,7 +105,11 @@
     "invoiceFormat": {
       "type": "string",
       "description": "Identifier of the invoice representation/profile used for the payload. Code list, Section 2.8.",
-      "examples": ["EN16931", "ZUGFeRD", "INSBOUW"]
+      "examples": [
+        "EN16931",
+        "ZUGFeRD",
+        "INSBOUW"
+      ]
     },
     "invoiceNumber": {
       "type": "string",
@@ -169,7 +178,9 @@
       "type": "array",
       "description": "EN 16931 BG-23. VAT breakdown, one entry per tax category/rate. Section 2.3/2.4.",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/taxSubtotalItem" }
+      "items": {
+        "$ref": "#/$defs/taxSubtotalItem"
+      }
     },
     "paymentInstructions": {
       "$ref": "#/$defs/paymentInstructions",
@@ -178,12 +189,24 @@
     "evidenceReferences": {
       "type": "array",
       "description": "References to supporting evidence items (e.g. purchase order, delivery note). Section 2.3/2.4.",
-      "items": { "$ref": "#/$defs/evidenceReferenceItem" }
+      "items": {
+        "$ref": "#/$defs/evidenceReferenceItem"
+      }
     },
-    "einvoiceStatus": {
+    "invoiceLifecycleStatus": {
       "type": "string",
-      "enum": ["active", "corrected", "cancelled", "credited"],
-      "description": "DEVIATION FROM RULEBOOK DRAFT v0.7: the rulebook names this business attribute `status` (Section 2.3/2.8), identical to the Token Status List metadata claim `status` (Section 2.5/Chapter 6). A flat SD-JWT VC claim set cannot contain two properties with the same key, so this schema uses `einvoiceStatus` for the business lifecycle value (active/corrected/cancelled/credited, IR-EI-09) and reserves the bare `status` key for the revocation metadata object only. This should be raised with WP4 before the vct is registered."
+      "enum": [
+        "active",
+        "corrected",
+        "cancelled",
+        "credited"
+      ],
+      "description": "Business lifecycle status for corrections, cancellations and credit notes. If omitted, the lifecycle status SHALL be interpreted as `active`. Distinct from the registered `status` metadata claim used for Token Status List revocation. Sections 2.3, 2.8 and IR-EI-09."
+    },
+    "precedingInvoiceReference": {
+      "type": "string",
+      "minLength": 1,
+      "description": "EN 16931 BT-25. Identifier of the original or preceding invoice. SHALL be present when invoiceLifecycleStatus is corrected, cancelled or credited; MAY be omitted when the lifecycle status is active or omitted. Section 2.4 and IR-EI-09."
     }
   },
   "$defs": {
@@ -200,11 +223,24 @@
     "taxSubtotalItem": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["taxCategoryCode", "taxableAmount", "taxPercent", "taxAmount"],
+      "required": [
+        "taxCategoryCode",
+        "taxableAmount",
+        "taxPercent",
+        "taxAmount"
+      ],
       "properties": {
         "taxCategoryCode": {
           "type": "string",
-          "enum": ["S", "Z", "E", "AE", "G", "O", "K"],
+          "enum": [
+            "S",
+            "Z",
+            "E",
+            "AE",
+            "G",
+            "O",
+            "K"
+          ],
           "description": "EN 16931 BT-118 / UNCL 5305 VAT category code (EN 16931-aligned subset). Section 2.8."
         },
         "taxableAmount": {
@@ -228,11 +264,19 @@
     "paymentInstructions": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["paymentMeansCode", "paymentAccountIdentifier"],
+      "required": [
+        "paymentMeansCode",
+        "paymentAccountIdentifier"
+      ],
       "properties": {
         "paymentMeansCode": {
           "type": "string",
-          "enum": ["30", "48", "49", "58"],
+          "enum": [
+            "30",
+            "48",
+            "49",
+            "58"
+          ],
           "description": "EN 16931 BT-81 / UNCL 4461. 30=Credit transfer, 48=Bank card, 49=Direct debit, 58=SEPA credit transfer. Section 2.8."
         },
         "paymentMeansText": {
@@ -253,11 +297,19 @@
     "evidenceReferenceItem": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["evidenceReferencesType"],
+      "required": [
+        "evidenceReferencesType"
+      ],
       "properties": {
         "evidenceReferencesType": {
           "type": "string",
-          "enum": ["purchase_order", "delivery_note", "contract", "acceptance_evidence", "other"],
+          "enum": [
+            "purchase_order",
+            "delivery_note",
+            "contract",
+            "acceptance_evidence",
+            "other"
+          ],
           "description": "Type of the referenced supporting evidence item. Section 2.8."
         },
         "evidenceInlinePdfBase64": {
@@ -282,10 +334,47 @@
         }
       },
       "oneOf": [
-        { "required": ["evidenceInlinePdfBase64"] },
-        { "required": ["evidenceInlineUblBase64"] },
-        { "required": ["evidenceUri", "evidenceHash"] }
+        {
+          "required": [
+            "evidenceInlinePdfBase64"
+          ]
+        },
+        {
+          "required": [
+            "evidenceInlineUblBase64"
+          ]
+        },
+        {
+          "required": [
+            "evidenceUri",
+            "evidenceHash"
+          ]
+        }
       ]
     }
-  }
+  },
+  "x-rulebook-version": "0.71",
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "invoiceLifecycleStatus"
+        ],
+        "properties": {
+          "invoiceLifecycleStatus": {
+            "enum": [
+              "corrected",
+              "cancelled",
+              "credited"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "precedingInvoiceReference"
+        ]
+      }
+    }
+  ]
 }

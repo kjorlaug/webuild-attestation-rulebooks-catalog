@@ -18,7 +18,7 @@
     }
   },
   "cryptographically_bound_to": "uri:eu.ebw.oid.1",
-  "attestation_legal_category": "EAA",
+  "attestation_legal_category": "non-qualified-EAA",
   "invoicePayloadHash": "sha256:9f2c8b1e7d43a0c5f6e9b2d1a4c7e0f3b6d9a2c5e8f1b4d7a0c3e6f9b2d5a8c1",
   "invoiceFormat": "EN16931",
   "invoiceNumber": "INV-2026-000123",
@@ -54,5 +54,5 @@
       "evidenceHash": "sha256:3a7c9e1b5d8f2a4c6e0b3d7f9a1c5e8b2d4f6a0c3e7b9d1f5a8c2e6b0d4f7a3c"
     }
   ],
-  "einvoiceStatus": "active"
+  "invoiceLifecycleStatus": "active"
 }
